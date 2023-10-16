@@ -43,7 +43,6 @@ class TestInstructionFactory(unittest.TestCase):
 
         # TODO: exceptions should be tested
 
-    @unittest.skip("to implement")
     def test_get_text(self):
         text = r"""
             add x0, x0, x0      ; Instruction0
@@ -58,12 +57,15 @@ class TestInstructionFactory(unittest.TestCase):
             add x0, x0, x0      ; Instruction7
         """
         self.assertEqual(
-            hex(InstructionFactory.get_text(text)[5]),
-            "0xff1ff0ef"
+            int(InstructionFactory.get_text(text)[5]),
+            0xff1ff0ef,
+            f"\n{bin(InstructionFactory.get_text(text)[5])}\n{bin(0xff1ff0ef)}"
         )
         self.assertEqual(
-            hex(InstructionFactory.get_text(text)[3]),
-            "0x00208667"
+            int(InstructionFactory.get_text(text)[3]),
+            0x00208667,
+            f"\n{int(InstructionFactory.get_text(text)[3]):0=#34b}"
+            f"\n{int(0x00208667):0=#34b}"
         )
 
 
@@ -255,6 +257,7 @@ class TestSimulator(unittest.TestCase):
                 read = sim_copy.registers[r].get(SIZE, signed=True)
             self.assertEqual(read, v, f"{i=} {r=} {read=:#x} {v=:#x}")
         # TODO: exceptions should be tested
+        # TODO: test step(None)
 
     @unittest.skip("to implement")
     def test_load(self):

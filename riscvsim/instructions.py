@@ -12,6 +12,9 @@ class Instruction:
     def __index__(self):
         raise NotImplementedError
 
+    def __repr__(self):
+        return f"<{self.name} {int(self):0=#10x} {vars(self)}>"
+
 
 class InstructionR(Instruction):
 
@@ -113,9 +116,13 @@ class InstructionUJ(Instruction):
 
 
 class AddInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b000
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        self.opcode = 0b0110011
+        self.funct3 = 0b000
+        self.funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -124,14 +131,15 @@ class AddInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SubInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b000
-    funct7 = 0b0100000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        self.opcode = 0b0110011
+        self.funct3 = 0b000
+        self.funct7 = 0b0100000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -140,14 +148,15 @@ class SubInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SllInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b001
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        self.opcode = 0b0110011
+        self.funct3 = 0b001
+        self.funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -156,14 +165,15 @@ class SllInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SrlInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b101
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110011
+        funct3 = 0b101
+        funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -172,14 +182,15 @@ class SrlInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SraInstruction(InstructionR):
-    opcode = 0b0110011
-    fucnt3 = 0b101
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110011
+        funct3 = 0b101
+        funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=True)
@@ -188,14 +199,15 @@ class SraInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class XorInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b100
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110011
+        funct3 = 0b100
+        funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -204,14 +216,15 @@ class XorInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class OrInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b110
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110011
+        funct3 = 0b110
+        funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -220,14 +233,15 @@ class OrInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class AndInstruction(InstructionR):
-    opcode = 0b0110011
-    funct3 = 0b111
-    funct7 = 0b0000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110011
+        funct3 = 0b111
+        funct7 = 0b0000000
 
     def run_by(self, simulator):
         v_rs1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -236,13 +250,14 @@ class AndInstruction(InstructionR):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LbInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b000
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -251,13 +266,14 @@ class LbInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LhInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b001
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b001
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -266,13 +282,14 @@ class LhInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LwInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b010
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b010
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -281,13 +298,14 @@ class LwInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LdInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b011
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b011
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -296,13 +314,14 @@ class LdInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LbuInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 100
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 100
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -311,13 +330,14 @@ class LbuInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LhuInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b101
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b101
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -326,13 +346,14 @@ class LhuInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LwuInstruction(InstructionI):
-    opcode = 0b0000011
-    funct3 = 0b110
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0000011
+        funct3 = 0b110
 
     def run_by(self, simulator):
         base_addr = simulator.registers[self.rs].get(SIZE, signed=False)
@@ -341,13 +362,14 @@ class LwuInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class AddiInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) + self.imm
@@ -355,14 +377,15 @@ class AddiInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SlliInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b001
-    funct6 = 0b000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b001
+        funct6 = 0b000000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) << self.imm
@@ -370,14 +393,15 @@ class SlliInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SrliInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b101
-    funct6 = 0b000000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b101
+        funct6 = 0b000000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) >> self.imm
@@ -385,14 +409,15 @@ class SrliInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SraiInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b101
-    funct6 = 0b010000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b101
+        funct6 = 0b010000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=True) >> self.imm
@@ -400,13 +425,14 @@ class SraiInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class XoriInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 100
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 100
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) ^ self.imm
@@ -414,13 +440,14 @@ class XoriInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class OriInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b110
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b110
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) | self.imm
@@ -428,13 +455,14 @@ class OriInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class AndiInstruction(InstructionI):
-    opcode = 0b0010011
-    funct3 = 0b111
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0010011
+        funct3 = 0b111
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) & self.imm
@@ -442,13 +470,14 @@ class AndiInstruction(InstructionI):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class JalrInstruction(InstructionI):
-    opcode = 0b1100111
-    funct3 = 0b000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs].get(SIZE, signed=False) + self.imm
@@ -456,13 +485,14 @@ class JalrInstruction(InstructionI):
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SbInstruction(InstructionS):
-    opcode = 0b0100011
-    funct3 = 0b000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0100011
+        funct3 = 0b000
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs2].get(1, signed=False)
@@ -471,13 +501,14 @@ class SbInstruction(InstructionS):
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class ShInstruction(InstructionS):
-    opcode = 0b0100011
-    funct3 = 0b001
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0100011
+        funct3 = 0b001
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs2].get(2, signed=False)
@@ -486,13 +517,14 @@ class ShInstruction(InstructionS):
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SwInstruction(InstructionS):
-    opcode = 0b0100011
-    funct3 = 0b010
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0100011
+        funct3 = 0b010
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs2].get(4, signed=False)
@@ -501,13 +533,14 @@ class SwInstruction(InstructionS):
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class SdInstruction(InstructionS):
-    opcode = 0b0100011
-    funct3 = 0b111
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0100011
+        funct3 = 0b111
 
     def run_by(self, simulator):
         v = simulator.registers[self.rs2].get(8, signed=False)
@@ -516,13 +549,14 @@ class SdInstruction(InstructionS):
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class BeqInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 0b000
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b000
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=True)
@@ -534,13 +568,14 @@ class BeqInstruction(InstructionSB):
             pc += 4
         simulator.pc = pc
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class BneInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 0b001
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b001
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=True)
@@ -552,13 +587,14 @@ class BneInstruction(InstructionSB):
             pc += 4
         simulator.pc = pc
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class BltInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 0b100
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b100
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=True)
@@ -569,14 +605,15 @@ class BltInstruction(InstructionSB):
         else:
             pc += 4
         simulator.pc = pc
-
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
 
 
 class BgeInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 0b101
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b101
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=True)
@@ -588,13 +625,14 @@ class BgeInstruction(InstructionSB):
             pc += 4
         simulator.pc = pc
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class BltuInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 110
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 110
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -606,13 +644,14 @@ class BltuInstruction(InstructionSB):
             pc += 4
         simulator.pc = pc
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class BgeuInstruction(InstructionSB):
-    opcode = 0b1100111
-    funct3 = 0b111
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1100111
+        funct3 = 0b111
 
     def run_by(self, simulator):
         v1 = simulator.registers[self.rs1].get(SIZE, signed=False)
@@ -624,12 +663,13 @@ class BgeuInstruction(InstructionSB):
             pc += 4
         simulator.pc = pc
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class LuiInstruction(InstructionU):
-    opcode = 0b0110111
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b0110111
 
     def run_by(self, simulator):
         v = self.imm << 12
@@ -637,19 +677,17 @@ class LuiInstruction(InstructionU):
         pc = simulator.pc
         simulator.pc = pc + 4
 
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
-
 
 class JalInstruction(InstructionUJ):
-    opcode = 0b1101111
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = __class__.__name__
+        opcode = 0b1101111
 
     def run_by(self, simulator):
         pc = simulator.pc
         v = pc + self.imm * 2
         simulator.registers[self.rd].set(SIZE, pc + 4)
         simulator.pc = v
-
-    def __repr__(self):
-        return f"<{__class__.__name__} {int(self):0=#10x} {vars(self)}>"
 

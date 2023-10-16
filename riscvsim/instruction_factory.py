@@ -49,8 +49,45 @@ class InstructionFactory:
         return instruction
 
     @classmethod
+    def get_text(cls, text):
+        # TODO: ugly, refactor this
+        labels = {}
+        text = text.splitlines()
+
+        def remove_comment(line):
+            semicolon_idx = line.find(";")
+            if semicolon_idx == -1:
+                semicolon_idx = None
+            return line[:semicolon_idx]
+        text = list(map(remove_comment, text))
+        text = [_.strip() for _ in text]
+
+        # get labels and offsets
+        index = 0
+        for line in text:
+            if line.endswith(":"):
+                label = line.rstrip(":")
+                labels[label] = index
+            else:
+                index += 1
+        text = list(filter(lambda x: x.rstrip(":") not in labels, text))
+
+        def replace_labels_with_offsets(curr_line):
+            curr, line = curr_line
+            for label, index in labels.items():
+                offset = (index - curr) * 2
+                line = line.replace(label, str(offset))
+            return line
+        text = list(map(replace_labels_with_offsets, enumerate(text)))
+        text = list(filter(lambda x: x and not x.isspace(), text))
+
+        text = [__class__.get(_) for _ in text]
+        return text
+
+    @classmethod
     def __extract_tokens(cls, x):
         if isinstance(x, int):
+            # TODO: imlement, test
             raise NotImplementedError
         elif isinstance(x, str):
             tokens = x.lower() \
