@@ -1,4 +1,5 @@
 from .config import REGISTERS_DIR, SIZE
+from .instruction_factory import InstructionFactory
 
 
 class Register:
@@ -195,12 +196,17 @@ class Simulator:
         for i, v in enumerate(values):
             self.memory[start+i].set(1, v)
 
+    def load(self, addr, text):
+        for i, line in enumerate(text):
+            offset = i * 4
+            self.memory.write(addr+offset, 4, int(line))
+
     def step(self, instruction=None):
-        if isinstance == None:
-            # TODO
-            pass
-        else:
-            instruction.run_by(self)
+        if instruction == None:
+            instruction = self.memory.read(self.pc, 4, signed=False)
+            instruction = InstructionFactory.get(instruction)
+        print(instruction)
+        instruction.run_by(self)
 
     def __str__(self):
         return "\n".join([

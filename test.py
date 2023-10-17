@@ -21,7 +21,7 @@ from riscvsim.config import *
 
 class TestInstructionFactory(unittest.TestCase):
 
-    def test_get(self):
+    def test_get_str(self):
         cases = [
             ["add x3, x2, x1",      0x001101b3],
             ["addi x2, x1, -100",   0xf9c08113],
@@ -29,7 +29,7 @@ class TestInstructionFactory(unittest.TestCase):
             ["slli x2, x1, 12",     0x00c09113],
             ["jalr x2, -100(x1)",   0xf9c08167],
             ["sw x2, 100(x1)",      0x0620a223],
-            ["beq x1, x2, -100",    0xf2208ce7],
+            ["beq x1, x2, -100",    0xf2208ce3],
             ["lui x1, 1234",        0x004d20b7],
             ["jal x1, -200",        0xe71ff0ef],
             # TODO: more and more
@@ -42,6 +42,22 @@ class TestInstructionFactory(unittest.TestCase):
             self.assertEqual(int(i), v, f"{i=}\n{int(i):0=#32b}\n{v:0=#32b}")
 
         # TODO: exceptions should be tested
+
+    def test_get_int(self):
+        cases = [
+            0x001101b3,
+            0xf9c08113,
+            0xf9c0a103,
+            0x00c09113,
+            0xf9c08167,
+            0x0620a223,
+            0xf2208ce3,
+            0x004d20b7,
+            0xe71ff0ef,
+        ]
+        for v in cases:
+            i = InstructionFactory.get(v)
+            self.assertEqual(int(i), v, f"{v:0=#10x}")
 
     def test_get_text(self):
         text = r"""
@@ -63,9 +79,9 @@ class TestInstructionFactory(unittest.TestCase):
         )
         self.assertEqual(
             int(InstructionFactory.get_text(text)[3]),
-            0x00208667,
+            0x00208663,
             f"\n{int(InstructionFactory.get_text(text)[3]):0=#34b}"
-            f"\n{int(0x00208667):0=#34b}"
+            f"\n{int(0x00208663):0=#34b}"
         )
 
 
@@ -257,11 +273,68 @@ class TestSimulator(unittest.TestCase):
                 read = sim_copy.registers[r].get(SIZE, signed=True)
             self.assertEqual(read, v, f"{i=} {r=} {read=:#x} {v=:#x}")
         # TODO: exceptions should be tested
-        # TODO: test step(None)
 
-    @unittest.skip("to implement")
+    def test_step_None(self):
+        sim = Simulator(pc=0x8000)
+        text = r"""
+            addi x5, x0, 100
+            addi x6, x0, -100
+            add x7, x5, x6
+            beq x0, x7, label_equal
+            beq x0, x0, label_done
+        label_equal:
+            addi x6, x0, 114514
+        label_done:
+            addi x5, x0, 0
+            addi x6, x0, 0
+        """
+        cases = [
+            ["x5", 100],
+            ["x6", -100],
+            ["x7", 0],
+            ["pc", 0x8000 + 4 * 5],
+            ["x5", 0],
+            ["x6", 0],
+        ]
+        text = InstructionFactory.get_text(text)
+        sim.load(0x8000, text)
+        for r, v in cases:
+            sim.step()
+            print(r, v)
+            print(sim)
+            if r == "pc":
+                self.assertEqual(sim.pc, v)
+            else:
+                self.assertEqual(sim.registers[r].get(SIZE, signed=False), v)
+
     def test_load(self):
-        pass
+        sim = Simulator()
+        text = r"""
+            add x0, x0, x0      ; Instruction0
+        label2:
+            add x0, x0, x0      ; Instruction1
+            add x0, x0, x0      ; Instruction2
+            beq x1, x2, label1  ; Instruction3
+            add x0, x0, x0      ; Instruction4
+            jal x1, label2      ; Instruction5
+        label1:
+            add x0, x0, x0      ; Instruction6
+            add x0, x0, x0      ; Instruction7
+        """
+        mem_from_0x8000 = [
+            0x33, 0x00, 0x00, 0x00,
+            0x33, 0x00, 0x00, 0x00,
+            0x33, 0x00, 0x00, 0x00,
+            0x63, 0x86, 0x20, 0x00,
+            0x33, 0x00, 0x00, 0x00,
+            0xef, 0xf0, 0x1f, 0xff,
+            0x33, 0x00, 0x00, 0x00,
+            0x33, 0x00, 0x00, 0x00,
+        ]
+        text = InstructionFactory.get_text(text)
+        sim.load(0x8000, text)
+        for offset, v in enumerate(mem_from_0x8000):
+            self.assertEqual(sim[offset + 0x8000], v, f"{offset}, {v}\n{sim}")
 
     @unittest.skip("to implement")
     def test_run(self):

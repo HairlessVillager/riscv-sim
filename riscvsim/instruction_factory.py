@@ -44,8 +44,11 @@ class InstructionFactory:
 
     @classmethod
     def get(cls, x):
-        tokens = __class__.__extract_tokens(x)
-        instruction = __class__.__translate(tokens)
+        if isinstance(x, str):
+            tokens = cls.__extract_tokens(x)
+            instruction = cls.__translate(tokens)
+        elif isinstance(x, int):
+            instruction = cls.__translate_int(x)
         return instruction
 
     @classmethod
@@ -81,29 +84,98 @@ class InstructionFactory:
         text = list(map(replace_labels_with_offsets, enumerate(text)))
         text = list(filter(lambda x: x and not x.isspace(), text))
 
-        text = [__class__.get(_) for _ in text]
+        text = [cls.get(_) for _ in text]
         return text
 
     @classmethod
     def __extract_tokens(cls, x):
-        if isinstance(x, int):
-            # TODO: imlement, test
-            raise NotImplementedError
-        elif isinstance(x, str):
-            tokens = x.lower() \
-                .replace(",", " ") \
-                .replace("(", " ") \
-                .replace(")", " ") \
-                .split()
-        else:
-            raise TypeError(f"The x should be 'int' or 'str', "
-                            f"got {type(x)}")
+        tokens = x.lower() \
+            .replace(",", " ") \
+            .replace("(", " ") \
+            .replace(")", " ") \
+            .split()
         return tokens
+
+    @classmethod
+    def __translate_int(cls, value):
+        opcode = (value >> 0) & 0b1111111
+        funct3 = (value >> 12) & 0b111
+        funct7 = (value >> 25) & 0b1111111
+        rd = (value >> 7) & 0b11111
+        rs1 = (value >> 15) & 0b11111
+        rs2 = (value >> 20) & 0b11111
+
+        instructions_ = instruction_classes.copy().values()
+        instructions_ = list(filter(
+            lambda i: i.opcode == opcode,
+            instructions_
+        ))
+
+        # Ugly. Is there any way to use issubclass() in match-case?
+        match instructions_[0].mro()[1]:
+            case instructions.InstructionR:
+                instructions_ = list(filter(
+                    lambda i: i.funct3 == funct3
+                          and i.funct7 == funct7,
+                    instructions_
+                ))
+                assert len(instructions_) == 1
+                return instructions_[0](rd=rd, rs1=rs1, rs2=rs2)
+            case instructions.InstructionI:
+                instructions_ = list(filter(
+                    lambda i: i.funct3 == funct3,
+                    instructions_
+                ))
+                assert len(instructions_) == 1
+                imm = (value >> 20) & 0x0fff
+                raise Warning("imm are considered as unsigned")
+                return instructions_[0](rd=rd, rs1=rs1, imm=imm)
+            case instructions.InstructionS:
+                instructions_ = list(filter(
+                    lambda i: i.funct3 == funct3,
+                    instructions_
+                ))
+                assert len(instructions_) == 1
+                imm = (((value >> 25) & 0b1111111) << 5) \
+                    | (((value >> 7) & 0b1111) << 0)
+                raise Warning("imm are considered as unsigned")
+                return instructions_[0](rs1=rs1, rs2=rs2, imm=imm)
+            case instructions.InstructionSB:
+                instructions_ = list(filter(
+                    lambda i: i.funct3 == funct3,
+                    instructions_
+                ))
+                assert len(instructions_) == 1
+                imm = (((value >> 31) & 0b1) << 12) \
+                    | (((value >> 25) & 0b111111) << 5) \
+                    | (((value >> 8) & 0b1111) << 1) \
+                    | (((value >> 7) & 0b1) << 11)
+                imm >>= 1
+                raise Warning("imm are considered as unsigned")
+                return instructions_[0](rs1=rs1, rs2=rs2, imm=imm)
+            case instructions.InstructionU:
+                assert len(instructions_) == 1
+                imm = ((value >> 12) & 0x0fffff) << 0
+                raise Warning("imm are considered as unsigned")
+                return instructions_[0](rd=rd, imm=imm)
+            case instructions.InstructionUJ:
+                assert len(instructions_) == 1
+                imm = (((value >> 31) & 0b1) << 20) \
+                    | (((value >> 21) & 0x3ff) << 1) \
+                    | (((value >> 20) & 0b1) << 11) \
+                    | (((value >> 12) & 0xff) << 12)
+                imm >>= 1
+                raise Warning("imm are considered as unsigned")
+                return instructions_[0](rd=rd, imm=imm)
+            case other:
+                raise TypeError(f"The instructions_[0] is unexpected, "
+                                f"got {other}")
+        return None
 
     @classmethod
     def __translate(cls, tokens):
         inst = tokens[0]
-        ridx = __class__.__register_index
+        ridx = cls.__register_index
 
         match inst:
             case (
@@ -120,20 +192,23 @@ class InstructionFactory:
                     | "jalr"):
                 rd = ridx(tokens[1])
                 imm = int(tokens[2])
-                rs = ridx(tokens[3])
-                return instruction_classes[inst](rd=rd, imm=imm, rs=rs)
+                raise Warning("imm are considered as unsigned")
+                rs1 = ridx(tokens[3])
+                return instruction_classes[inst](rd=rd, imm=imm, rs1=rs1)
             case (
                     "addi"
                     | "slli" | "srli" | "srai"
                     | "xori" | "ori" | "andi"):
                 rd = ridx(tokens[1])
-                rs = ridx(tokens[2])
+                rs1 = ridx(tokens[2])
                 imm = int(tokens[3])
-                return instruction_classes[inst](rd=rd, imm=imm, rs=rs)
+                raise Warning("imm are considered as unsigned")
+                return instruction_classes[inst](rd=rd, imm=imm, rs1=rs1)
             case (
                     "sb" | "sh" | "sw" | "sd"):
                 rs2 = ridx(tokens[1])
                 imm = int(tokens[2])
+                raise Warning("imm are considered as unsigned")
                 rs1 = ridx(tokens[3])
                 return instruction_classes[inst](rs2=rs2, imm=imm, rs1=rs1)
             case (
@@ -142,11 +217,13 @@ class InstructionFactory:
                 rs1 = ridx(tokens[1])
                 rs2 = ridx(tokens[2])
                 imm = int(tokens[3])
+                raise Warning("imm are considered as unsigned")
                 return instruction_classes[inst](rs1=rs1, rs2=rs2, imm=imm)
             case (
                     "lui" | "jal"):
                 rd = ridx(tokens[1])
                 imm = int(tokens[2])
+                raise Warning("imm are considered as unsigned")
                 return instruction_classes[inst](rd=rd, imm=imm)
             case _:
                 raise ValueError(f"The instruction `{inst}` is not supported.")
