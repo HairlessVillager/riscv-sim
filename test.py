@@ -15,8 +15,28 @@ from riscvsim import (
     Register,
     Simulator,
     Memory,
+    utils,
 )
 from riscvsim.config import *
+
+
+class TestUtils(unittest.TestCase):
+
+    def test_signed_as(self):
+        cases = [
+            [0b00001111, 8, 15],
+            [0b00001111, 4, -1],
+            [0b00111100, 8, 60],
+            [0b00111100, 4, -4],
+            [0b11111111, 8, -1],
+            [0b11111111, 4, -1],
+        ]
+        for i, (before, bits, after) in enumerate(cases):
+            self.assertEqual(utils.signed_as(before, bits=bits, strict=False), after,
+                f"{i=}")
+
+        with self.assertRaisesRegex(ValueError, r"strict mode"):
+            utils.signed_as(0b00111100, bits=4)
 
 
 class TestInstructionFactory(unittest.TestCase):

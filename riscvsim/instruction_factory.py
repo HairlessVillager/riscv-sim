@@ -128,7 +128,7 @@ class InstructionFactory:
                 ))
                 assert len(instructions_) == 1
                 imm = (value >> 20) & 0x0fff
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 return instructions_[0](rd=rd, rs1=rs1, imm=imm)
             case instructions.InstructionS:
                 instructions_ = list(filter(
@@ -138,7 +138,7 @@ class InstructionFactory:
                 assert len(instructions_) == 1
                 imm = (((value >> 25) & 0b1111111) << 5) \
                     | (((value >> 7) & 0b1111) << 0)
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 return instructions_[0](rs1=rs1, rs2=rs2, imm=imm)
             case instructions.InstructionSB:
                 instructions_ = list(filter(
@@ -151,12 +151,12 @@ class InstructionFactory:
                     | (((value >> 8) & 0b1111) << 1) \
                     | (((value >> 7) & 0b1) << 11)
                 imm >>= 1
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 return instructions_[0](rs1=rs1, rs2=rs2, imm=imm)
             case instructions.InstructionU:
                 assert len(instructions_) == 1
                 imm = ((value >> 12) & 0x0fffff) << 0
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=20)
                 return instructions_[0](rd=rd, imm=imm)
             case instructions.InstructionUJ:
                 assert len(instructions_) == 1
@@ -165,7 +165,7 @@ class InstructionFactory:
                     | (((value >> 20) & 0b1) << 11) \
                     | (((value >> 12) & 0xff) << 12)
                 imm >>= 1
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=20)
                 return instructions_[0](rd=rd, imm=imm)
             case other:
                 raise TypeError(f"The instructions_[0] is unexpected, "
@@ -178,6 +178,7 @@ class InstructionFactory:
         ridx = cls.__register_index
 
         match inst:
+            # R
             case (
                     "add" | "sub"
                     | "sll" | "srl" | "sra"
@@ -186,15 +187,17 @@ class InstructionFactory:
                 rs1 = ridx(tokens[2])
                 rs2 = ridx(tokens[3])
                 return instruction_classes[inst](rd=rd, rs1=rs1, rs2=rs2)
+            # I
             case (
                     "lb" | "lh" | "lw" | "ld"
                     | "lbu" | "lhu" | "lwu"
                     | "jalr"):
                 rd = ridx(tokens[1])
                 imm = int(tokens[2])
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 rs1 = ridx(tokens[3])
                 return instruction_classes[inst](rd=rd, imm=imm, rs1=rs1)
+            # I
             case (
                     "addi"
                     | "slli" | "srli" | "srai"
@@ -202,28 +205,36 @@ class InstructionFactory:
                 rd = ridx(tokens[1])
                 rs1 = ridx(tokens[2])
                 imm = int(tokens[3])
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 return instruction_classes[inst](rd=rd, imm=imm, rs1=rs1)
+            # S
             case (
                     "sb" | "sh" | "sw" | "sd"):
                 rs2 = ridx(tokens[1])
                 imm = int(tokens[2])
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 rs1 = ridx(tokens[3])
                 return instruction_classes[inst](rs2=rs2, imm=imm, rs1=rs1)
+            # SB
             case (
                     "beq" | "bne" | "blt" | "bge"
                     | "bltu" | "bgeu"):
                 rs1 = ridx(tokens[1])
                 rs2 = ridx(tokens[2])
                 imm = int(tokens[3])
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=12)
                 return instruction_classes[inst](rs1=rs1, rs2=rs2, imm=imm)
-            case (
-                    "lui" | "jal"):
+            # UJ
+            case "jal":
                 rd = ridx(tokens[1])
                 imm = int(tokens[2])
-                raise Warning("imm are considered as unsigned")
+                imm = utils.signed_as(imm, bits=20)
+                return instruction_classes[inst](rd=rd, imm=imm)
+            # U
+            case "lui":
+                rd = ridx(tokens[1])
+                imm = int(tokens[2])
+                imm = utils.signed_as(imm, bits=20)
                 return instruction_classes[inst](rd=rd, imm=imm)
             case _:
                 raise ValueError(f"The instruction `{inst}` is not supported.")
